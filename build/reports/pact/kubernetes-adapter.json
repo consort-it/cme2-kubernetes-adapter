@@ -1,0 +1,476 @@
+{
+    "metaData": {
+        "date": "2018-04-24T11:32:33+0000",
+        "pactJvmVersion": "3.2.11",
+        "reportFormat": "0.0.0"
+    },
+    "provider": {
+        "name": "kubernetes-adapter"
+    },
+    "execution": [
+        {
+            "consumer": {
+                "name": "cme-ui",
+                "source": {
+                    "file": "C:\\Users\\David Renner\\Desktop\\kubernetes-adapter\\src\\test\\resources\\pacts\\cme-ui-kubernetes-adapter.json"
+                }
+            },
+            "interactions": [
+                {
+                    "interaction": {
+                        "providerState": "provider has no namespaces",
+                        "response": {
+                            "JSONREGEXP": "^\\s*(true|false|null|[0-9]+|\"\\w*|\\{\\s*(}|\"\\w+)|\\[\\s*).*",
+                            "matchingRules": null,
+                            "body": {
+                                "value": "[]",
+                                "missing": false,
+                                "null": false,
+                                "present": true,
+                                "state": "PRESENT",
+                                "empty": false
+                            },
+                            "headers": {
+                                "content-type": "application/json"
+                            },
+                            "XMLREGEXP": "^\\s*<\\?xml\\s*version.*",
+                            "status": 200,
+                            "HTMLREGEXP": "^\\s*(<!DOCTYPE)|(<HTML>).*",
+                            "XMLREGEXP2": "^\\s*<\\w+\\s*(:\\w+=[\\\"\u201d][^\\\"\u201d]+[\\\"\u201d])?.*"
+                        },
+                        "description": "a request to GET namespaces",
+                        "request": {
+                            "JSONREGEXP": "^\\s*(true|false|null|[0-9]+|\"\\w*|\\{\\s*(}|\"\\w+)|\\[\\s*).*",
+                            "query": {
+                                "nosec": [
+                                    "1"
+                                ]
+                            },
+                            "matchingRules": null,
+                            "path": "/api/v1/kubernetes-adapter/namespaces",
+                            "body": {
+                                "value": null,
+                                "missing": true,
+                                "null": false,
+                                "present": false,
+                                "state": "MISSING",
+                                "empty": false
+                            },
+                            "headers": null,
+                            "XMLREGEXP": "^\\s*<\\?xml\\s*version.*",
+                            "HTMLREGEXP": "^\\s*(<!DOCTYPE)|(<HTML>).*",
+                            "XMLREGEXP2": "^\\s*<\\w+\\s*(:\\w+=[\\\"\u201d][^\\\"\u201d]+[\\\"\u201d])?.*",
+                            "method": "GET"
+                        }
+                    },
+                    "verification": {
+                        "result": "failed",
+                        "body": {
+                            "comparison": {
+                                "$.body": "Expected an empty List but received List(Map(name -> default, id -> default), Map(name -> kube-public, id -> kube-public), Map(name -> kube-system, id -> kube-system), Map(name -> test-namespace, id -> test-namespace))"
+                            },
+                            "diff": [
+                                "@1",
+                                "-    ",
+                                "+    {",
+                                "+        \"name\": \"default\",",
+                                "+        \"id\": \"default\"",
+                                "+    },",
+                                "+    {",
+                                "+        \"name\": \"kube-public\",",
+                                "+        \"id\": \"kube-public\"",
+                                "+    },",
+                                "+    {",
+                                "+        \"name\": \"kube-system\",",
+                                "+        \"id\": \"kube-system\"",
+                                "+    },",
+                                "+    {",
+                                "+        \"name\": \"test-namespace\",",
+                                "+        \"id\": \"test-namespace\"",
+                                "+    }",
+                                "]",
+                                ""
+                            ]
+                        }
+                    }
+                },
+                {
+                    "interaction": {
+                        "providerState": "provider has existing namespaces",
+                        "response": {
+                            "JSONREGEXP": "^\\s*(true|false|null|[0-9]+|\"\\w*|\\{\\s*(}|\"\\w+)|\\[\\s*).*",
+                            "matchingRules": {
+                                "$.body": {
+                                    "match": "type"
+                                }
+                            },
+                            "body": {
+                                "value": "[{\"id\":\"ID1\",\"name\":\"name1\"},{\"id\":\"ID2\",\"name\":\"name2\"}]",
+                                "missing": false,
+                                "null": false,
+                                "present": true,
+                                "state": "PRESENT",
+                                "empty": false
+                            },
+                            "headers": {
+                                "content-type": "application/json"
+                            },
+                            "XMLREGEXP": "^\\s*<\\?xml\\s*version.*",
+                            "status": 200,
+                            "HTMLREGEXP": "^\\s*(<!DOCTYPE)|(<HTML>).*",
+                            "XMLREGEXP2": "^\\s*<\\w+\\s*(:\\w+=[\\\"\u201d][^\\\"\u201d]+[\\\"\u201d])?.*"
+                        },
+                        "description": "a request to GET namespaces",
+                        "request": {
+                            "JSONREGEXP": "^\\s*(true|false|null|[0-9]+|\"\\w*|\\{\\s*(}|\"\\w+)|\\[\\s*).*",
+                            "query": {
+                                "nosec": [
+                                    "1"
+                                ]
+                            },
+                            "matchingRules": null,
+                            "path": "/api/v1/kubernetes-adapter/namespaces",
+                            "body": {
+                                "value": null,
+                                "missing": true,
+                                "null": false,
+                                "present": false,
+                                "state": "MISSING",
+                                "empty": false
+                            },
+                            "headers": null,
+                            "XMLREGEXP": "^\\s*<\\?xml\\s*version.*",
+                            "HTMLREGEXP": "^\\s*(<!DOCTYPE)|(<HTML>).*",
+                            "XMLREGEXP2": "^\\s*<\\w+\\s*(:\\w+=[\\\"\u201d][^\\\"\u201d]+[\\\"\u201d])?.*",
+                            "method": "GET"
+                        }
+                    },
+                    "verification": {
+                        "result": "OK"
+                    }
+                },
+                {
+                    "interaction": {
+                        "providerState": "provider has no namespace NAMESPACEID",
+                        "response": {
+                            "JSONREGEXP": "^\\s*(true|false|null|[0-9]+|\"\\w*|\\{\\s*(}|\"\\w+)|\\[\\s*).*",
+                            "matchingRules": {
+                                "$.body": {
+                                    "match": "type"
+                                }
+                            },
+                            "body": {
+                                "value": "{\"code\":\"KA-1234\",\"status\":400,\"message\":\"an error message\",\"location\":\"somewhere\",\"time\":\"now\"}",
+                                "missing": false,
+                                "null": false,
+                                "present": true,
+                                "state": "PRESENT",
+                                "empty": false
+                            },
+                            "headers": {
+                                "content-type": "application/json"
+                            },
+                            "XMLREGEXP": "^\\s*<\\?xml\\s*version.*",
+                            "status": 400,
+                            "HTMLREGEXP": "^\\s*(<!DOCTYPE)|(<HTML>).*",
+                            "XMLREGEXP2": "^\\s*<\\w+\\s*(:\\w+=[\\\"\u201d][^\\\"\u201d]+[\\\"\u201d])?.*"
+                        },
+                        "description": "a request to GET all services of the non-existing namespace NAMESPACEID",
+                        "request": {
+                            "JSONREGEXP": "^\\s*(true|false|null|[0-9]+|\"\\w*|\\{\\s*(}|\"\\w+)|\\[\\s*).*",
+                            "query": {
+                                "nosec": [
+                                    "1"
+                                ]
+                            },
+                            "matchingRules": null,
+                            "path": "/api/v1/kubernetes-adapter/namespaces/test-namespace/services",
+                            "body": {
+                                "value": null,
+                                "missing": true,
+                                "null": false,
+                                "present": false,
+                                "state": "MISSING",
+                                "empty": false
+                            },
+                            "headers": null,
+                            "XMLREGEXP": "^\\s*<\\?xml\\s*version.*",
+                            "HTMLREGEXP": "^\\s*(<!DOCTYPE)|(<HTML>).*",
+                            "XMLREGEXP2": "^\\s*<\\w+\\s*(:\\w+=[\\\"\u201d][^\\\"\u201d]+[\\\"\u201d])?.*",
+                            "method": "GET"
+                        }
+                    },
+                    "verification": {
+                        "result": "failed",
+                        "status": [
+                            "assert expectedStatus == actualStatus",
+                            "       |              |  |",
+                            "       400            |  200",
+                            "                      false"
+                        ],
+                        "body": {
+                            "comparison": {
+                                "$.body": "Type mismatch: Expected Map Map(location -> somewhere, code -> KA-1234, status -> 400, message -> an error message, time -> now) but received List List()"
+                            },
+                            "diff": [
+                                "@0",
+                                "-{",
+                                "-    \"code\": \"KA-1234\",",
+                                "-    \"status\": 400,",
+                                "-    \"message\": \"an error message\",",
+                                "-    \"location\": \"somewhere\",",
+                                "-    \"time\": \"now\"",
+                                "-}",
+                                "+[",
+                                "+    ",
+                                "+]",
+                                ""
+                            ]
+                        }
+                    }
+                },
+                {
+                    "interaction": {
+                        "providerState": "provider has a namespace without services",
+                        "response": {
+                            "JSONREGEXP": "^\\s*(true|false|null|[0-9]+|\"\\w*|\\{\\s*(}|\"\\w+)|\\[\\s*).*",
+                            "matchingRules": null,
+                            "body": {
+                                "value": "[]",
+                                "missing": false,
+                                "null": false,
+                                "present": true,
+                                "state": "PRESENT",
+                                "empty": false
+                            },
+                            "headers": {
+                                "content-type": "application/json"
+                            },
+                            "XMLREGEXP": "^\\s*<\\?xml\\s*version.*",
+                            "status": 200,
+                            "HTMLREGEXP": "^\\s*(<!DOCTYPE)|(<HTML>).*",
+                            "XMLREGEXP2": "^\\s*<\\w+\\s*(:\\w+=[\\\"\u201d][^\\\"\u201d]+[\\\"\u201d])?.*"
+                        },
+                        "description": "a request to GET all services of the empty namespace",
+                        "request": {
+                            "JSONREGEXP": "^\\s*(true|false|null|[0-9]+|\"\\w*|\\{\\s*(}|\"\\w+)|\\[\\s*).*",
+                            "query": {
+                                "nosec": [
+                                    "1"
+                                ]
+                            },
+                            "matchingRules": null,
+                            "path": "/api/v1/kubernetes-adapter/namespaces/test-namespace/services",
+                            "body": {
+                                "value": null,
+                                "missing": true,
+                                "null": false,
+                                "present": false,
+                                "state": "MISSING",
+                                "empty": false
+                            },
+                            "headers": null,
+                            "XMLREGEXP": "^\\s*<\\?xml\\s*version.*",
+                            "HTMLREGEXP": "^\\s*(<!DOCTYPE)|(<HTML>).*",
+                            "XMLREGEXP2": "^\\s*<\\w+\\s*(:\\w+=[\\\"\u201d][^\\\"\u201d]+[\\\"\u201d])?.*",
+                            "method": "GET"
+                        }
+                    },
+                    "verification": {
+                        "result": "OK"
+                    }
+                },
+                {
+                    "interaction": {
+                        "providerState": "provider has a namespace NAMESPACEID with services",
+                        "response": {
+                            "JSONREGEXP": "^\\s*(true|false|null|[0-9]+|\"\\w*|\\{\\s*(}|\"\\w+)|\\[\\s*).*",
+                            "matchingRules": {
+                                "$.body": {
+                                    "match": "type"
+                                }
+                            },
+                            "body": {
+                                "value": "[{\"instances\":1,\"name\":\"my-service-v1\",\"status\":\"Running\",\"version\":\"1\"},{\"instances\":1,\"name\":\"my-service-2-v1\",\"status\":\"Broken\"}]",
+                                "missing": false,
+                                "null": false,
+                                "present": true,
+                                "state": "PRESENT",
+                                "empty": false
+                            },
+                            "headers": {
+                                "content-type": "application/json"
+                            },
+                            "XMLREGEXP": "^\\s*<\\?xml\\s*version.*",
+                            "status": 200,
+                            "HTMLREGEXP": "^\\s*(<!DOCTYPE)|(<HTML>).*",
+                            "XMLREGEXP2": "^\\s*<\\w+\\s*(:\\w+=[\\\"\u201d][^\\\"\u201d]+[\\\"\u201d])?.*"
+                        },
+                        "description": "a request to GET all services of namespace NAMESPACEID",
+                        "request": {
+                            "JSONREGEXP": "^\\s*(true|false|null|[0-9]+|\"\\w*|\\{\\s*(}|\"\\w+)|\\[\\s*).*",
+                            "query": {
+                                "nosec": [
+                                    "1"
+                                ]
+                            },
+                            "matchingRules": null,
+                            "path": "/api/v1/kubernetes-adapter/namespaces/test-namespace/services",
+                            "body": {
+                                "value": null,
+                                "missing": true,
+                                "null": false,
+                                "present": false,
+                                "state": "MISSING",
+                                "empty": false
+                            },
+                            "headers": null,
+                            "XMLREGEXP": "^\\s*<\\?xml\\s*version.*",
+                            "HTMLREGEXP": "^\\s*(<!DOCTYPE)|(<HTML>).*",
+                            "XMLREGEXP2": "^\\s*<\\w+\\s*(:\\w+=[\\\"\u201d][^\\\"\u201d]+[\\\"\u201d])?.*",
+                            "method": "GET"
+                        }
+                    },
+                    "verification": {
+                        "result": "OK"
+                    }
+                },
+                {
+                    "interaction": {
+                        "providerState": "provider is in an arbitrary state",
+                        "response": {
+                            "JSONREGEXP": "^\\s*(true|false|null|[0-9]+|\"\\w*|\\{\\s*(}|\"\\w+)|\\[\\s*).*",
+                            "matchingRules": {
+                                "$.body": {
+                                    "match": "type"
+                                }
+                            },
+                            "body": {
+                                "value": "{\"code\":\"KA-1234\",\"status\":500,\"message\":\"an error message\",\"location\":\"somewhere\",\"time\":\"now\"}",
+                                "missing": false,
+                                "null": false,
+                                "present": true,
+                                "state": "PRESENT",
+                                "empty": false
+                            },
+                            "headers": {
+                                "content-type": "application/json"
+                            },
+                            "XMLREGEXP": "^\\s*<\\?xml\\s*version.*",
+                            "status": 500,
+                            "HTMLREGEXP": "^\\s*(<!DOCTYPE)|(<HTML>).*",
+                            "XMLREGEXP2": "^\\s*<\\w+\\s*(:\\w+=[\\\"\u201d][^\\\"\u201d]+[\\\"\u201d])?.*"
+                        },
+                        "description": "a request to GET all services of a namespace that cause an internal provider error",
+                        "request": {
+                            "JSONREGEXP": "^\\s*(true|false|null|[0-9]+|\"\\w*|\\{\\s*(}|\"\\w+)|\\[\\s*).*",
+                            "query": {
+                                "nosec": [
+                                    "1"
+                                ]
+                            },
+                            "matchingRules": null,
+                            "path": "/api/v1/kubernetes-adapter/namespaces/test-namespace/services",
+                            "body": {
+                                "value": null,
+                                "missing": true,
+                                "null": false,
+                                "present": false,
+                                "state": "MISSING",
+                                "empty": false
+                            },
+                            "headers": null,
+                            "XMLREGEXP": "^\\s*<\\?xml\\s*version.*",
+                            "HTMLREGEXP": "^\\s*(<!DOCTYPE)|(<HTML>).*",
+                            "XMLREGEXP2": "^\\s*<\\w+\\s*(:\\w+=[\\\"\u201d][^\\\"\u201d]+[\\\"\u201d])?.*",
+                            "method": "GET"
+                        }
+                    },
+                    "verification": {
+                        "result": "failed",
+                        "status": [
+                            "assert expectedStatus == actualStatus",
+                            "       |              |  |",
+                            "       500            |  200",
+                            "                      false"
+                        ],
+                        "body": {
+                            "comparison": {
+                                "$.body": "Type mismatch: Expected Map Map(location -> somewhere, code -> KA-1234, status -> 500, message -> an error message, time -> now) but received List List()"
+                            },
+                            "diff": [
+                                "@0",
+                                "-{",
+                                "-    \"code\": \"KA-1234\",",
+                                "-    \"status\": 500,",
+                                "-    \"message\": \"an error message\",",
+                                "-    \"location\": \"somewhere\",",
+                                "-    \"time\": \"now\"",
+                                "-}",
+                                "+[",
+                                "+    ",
+                                "+]",
+                                ""
+                            ]
+                        }
+                    }
+                },
+                {
+                    "interaction": {
+                        "providerState": "provider has a namespace NAMESPACEID with service my-service-v1",
+                        "response": {
+                            "JSONREGEXP": "^\\s*(true|false|null|[0-9]+|\"\\w*|\\{\\s*(}|\"\\w+)|\\[\\s*).*",
+                            "matchingRules": {
+                                "$.body": {
+                                    "match": "type"
+                                }
+                            },
+                            "body": {
+                                "value": "[{\"instances\":1,\"name\":\"my-service-v1\",\"status\":\"Running\",\"version\":\"1\"}]",
+                                "missing": false,
+                                "null": false,
+                                "present": true,
+                                "state": "PRESENT",
+                                "empty": false
+                            },
+                            "headers": {
+                                "content-type": "application/json"
+                            },
+                            "XMLREGEXP": "^\\s*<\\?xml\\s*version.*",
+                            "status": 200,
+                            "HTMLREGEXP": "^\\s*(<!DOCTYPE)|(<HTML>).*",
+                            "XMLREGEXP2": "^\\s*<\\w+\\s*(:\\w+=[\\\"\u201d][^\\\"\u201d]+[\\\"\u201d])?.*"
+                        },
+                        "description": "a request to GET all services of namespace NAMESPACEID",
+                        "request": {
+                            "JSONREGEXP": "^\\s*(true|false|null|[0-9]+|\"\\w*|\\{\\s*(}|\"\\w+)|\\[\\s*).*",
+                            "query": {
+                                "nosec": [
+                                    "1"
+                                ]
+                            },
+                            "matchingRules": null,
+                            "path": "/api/v1/kubernetes-adapter/namespaces/test-namespace/services",
+                            "body": {
+                                "value": null,
+                                "missing": true,
+                                "null": false,
+                                "present": false,
+                                "state": "MISSING",
+                                "empty": false
+                            },
+                            "headers": null,
+                            "XMLREGEXP": "^\\s*<\\?xml\\s*version.*",
+                            "HTMLREGEXP": "^\\s*(<!DOCTYPE)|(<HTML>).*",
+                            "XMLREGEXP2": "^\\s*<\\w+\\s*(:\\w+=[\\\"\u201d][^\\\"\u201d]+[\\\"\u201d])?.*",
+                            "method": "GET"
+                        }
+                    },
+                    "verification": {
+                        "result": "OK"
+                    }
+                }
+            ]
+        }
+    ]
+}

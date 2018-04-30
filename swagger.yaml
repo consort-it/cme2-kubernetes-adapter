@@ -1,0 +1,258 @@
+swagger: "2.0"
+info:
+  description: "A microservice called kubernetes-adapter observing Kubernetes objects required to run microservices. Ticket at [http://swagger.io](http://swagger.io)."
+  version: "1.0.0"
+  title: "Kubernetes Adapter"
+  contact:
+    email: "david.renner@consort-it.de"
+host: "consort-it.de"
+basePath: "/api/v1/kubernetes-adapter"
+tags:
+- name: "Kubernetes"
+  description: "Kubernetes is software that enables microservices to run in container in the cloud."
+schemes:
+- "http"
+paths:
+  /namespaces:
+    get:
+      tags:
+      - "Kubernetes"
+      summary: "Receive List of available Pod of namespace of kubernetes."
+      description: "Internally connects to a Reader for Kubernetes Service and asks for list of Pod."
+      operationId: "getNamespaces"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: '#/definitions/Namespace'
+        400:
+          description: "In case something unexpected is received from the client"
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        500:
+          description: "In case something unexpected happens on the sever"
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /namespaces/{namespaceId}/services:
+    get:
+      tags:
+      - "Kubernetes"
+      summary: "Receive List of available Service of namespace of kubernetes."
+      description: "Internally connects to a Reader for Kubernetes Service and asks for list of Service."
+      operationId: "getServices"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "namespaceId"
+        in: "path"
+        description: "Namespace identifier"
+        required: true
+        type: "string"
+      - name: "listServiceNames"
+        in: "query"
+        description: "List of commaseparated values with service names."
+        required: false
+        type: "array"
+        items:
+          type: string
+        default: "ServiceName-v1,ServiceName2-v1"
+        collectionFormat: "csv"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Service"
+        400:
+          description: "In case something unexpected is received from the client"
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        500:
+          description: "In case something unexpected happens on the sever"
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /namespaces/{namespaceId}/services/{servicename}:
+    get:
+      tags:  
+      - "Kubernetes"
+      summary: "Receive List of available Service of namespace of kubernetes."
+      description: "Internally connects to a Reader for Kubernetes Service and asks for list of Service."
+      operationId: "getService"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "namespaceId"
+        in: "path"
+        description: "Namespace identifier"
+        required: true
+        type: "string"
+      - name: "servicename"
+        in: "path"
+        description: "Name of the service"
+        type: "string"
+        required: true
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Service"
+        400:
+          description: "In case something unexpected is received from the client"
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        500:
+          description: "In case something unexpected happens on the sever"
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /namespaces/{namespaceId}/services/{servicename}/pods:
+    get:
+      tags:  
+      - "Kubernetes"
+      summary: "Receive List of available Pods for a specific service of kubernetes."
+      description: "Internally connects to a Reader for Kubernetes Service and asks for list of PODs for a certain Service within a certain namespace."
+      operationId: "getPodsByService"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "namespaceId"
+        in: "path"
+        description: "Namespace identifier"
+        required: true
+        type: "string"
+      - name: "servicename"
+        in: "path"
+        description: "Name of the service"
+        type: "string"
+        required: true
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Pod"
+        400:
+          description: "In case something unexpected is received from the client"
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        500:
+          description: "In case something unexpected happens on the sever"
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+definitions:
+  Namespace:
+    type: "object"
+    required:
+    - id
+    - name
+    properties:
+      id:
+        type: "string"
+      name:
+        type: "string"
+  Service:
+    type: "object"
+    required:
+    - name
+    - version
+    - status
+    - instances
+    - reason
+    properties:
+      name:
+        type: "string"
+        description: "service name. This i a unique value, like an ID. It has the form 'service-name' or 'service-adapter'"
+      version:
+        type: "string"
+        description: "version/tag of service container image."
+      reason:
+        type: "string"
+        description: "reason of the service being in this current status."
+      status:
+        type: "string"
+        description: "Is the service running or something else?"
+        enum:
+        - Initializing
+        - Running
+        - Stopped
+        - Broken
+      instances:
+        type: "number"
+        description: "The number of service instances on kubernetes"
+  Pod:
+    type: "object"
+    required:
+    - name
+    - version
+    - status
+    properties:
+      name:
+        type: "string"
+        description: "service name. This i a unique value, like an ID. It has the form 'service-name' or 'service-adapter'"
+      version:
+        type: "string"
+        description: "version/tag of service container image."
+      status:
+        type: "string"
+        description: "Is the service running or something else?"
+        enum:
+        - Initializing
+        - Running
+        - Stopped
+        - Broken
+  ErrorResponse:
+    type: object
+    required:
+    - status
+    - code
+    - message
+    - location
+    - time
+    properties:
+      code: 
+        type: string
+        pattern: 'KA-\d+$'
+        description: "This error code should have the format 'KA-XXX' where XXX is an integer. It is used to uniquely distinguish different error cases in order to display a suitable and translatable error message on the UI."
+        example: "KA-1234"
+      status:
+        type: integer
+        description: "Represents the http status error that goes along with this error."
+      message:
+        type: string
+        description: "Should contain a short, meaningful description of the error case. Might be displayed to the end user."
+        example: "Could not create service 'some-name' because this service already exists."
+      trace:
+        type: array
+        description: "Contains a trace of errors if available. Only use for forwarding to developer. In case this is missing as it is optional use location to identify where error happened originally."
+        items:
+          $ref: "#/definitions/TracePoint"
+      location:
+        type: string
+        description: "Field that indicates where the error occured. This is a mandatory field and should be considered in case trace is not available."
+      time:
+        type: string
+        description: "The exact time the error occured within microservice."
+  TracePoint:
+    type: "object"
+    required:
+    - methodName
+    - fileName
+    - lineNumber
+    - className
+    - nativeMethod
+    properties:
+      methodName:
+        type: "string"
+      fileName:
+        type: "string"
+      lineNumber:
+        type: "integer"
+      className:
+        type: "string"
+      nativeMethod:
+        type: "boolean"

@@ -1,0 +1,210 @@
+{
+  "consumer": {
+    "name": "cme-ui"
+  },
+  "provider": {
+    "name": "kubernetes-adapter"
+  },
+  "interactions": [
+    {
+      "description": "a request to GET namespaces",
+      "providerState": "provider has no namespaces",
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/kubernetes-adapter/namespaces",
+        "headers": {
+          "authorization": "Bearer $AWS_COGNITO_TOKEN"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": [
+
+        ]
+      }
+    },
+    {
+      "description": "a request to GET namespaces",
+      "providerState": "provider has existing namespaces",
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/kubernetes-adapter/namespaces",
+        "headers": {
+          "authorization": "Bearer $AWS_COGNITO_TOKEN"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": [
+          {
+            "id": "ID1",
+            "name": "name1"
+          },
+          {
+            "id": "ID2",
+            "name": "name2"
+          }
+        ],
+        "matchingRules": {
+          "$.body": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "a request to GET all services of the non-existing namespace NAMESPACEID",
+      "providerState": "provider has no namespace NAMESPACEID",
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/kubernetes-adapter/namespaces/$CON_IT_TEST_NAMESPACE/services",
+        "headers": {
+          "authorization": "Bearer $AWS_COGNITO_TOKEN"
+        }
+      },
+      "response": {
+        "status": 400,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "code": "KA-1234",
+          "status": 400,
+          "message": "an error message",
+          "location": "somewhere",
+          "time": "now"
+        },
+        "matchingRules": {
+          "$.body": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "a request to GET all services of the empty namespace",
+      "providerState": "provider has a namespace without services",
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/kubernetes-adapter/namespaces/$CON_IT_TEST_NAMESPACE/services",
+        "headers": {
+          "authorization": "Bearer $AWS_COGNITO_TOKEN"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": [
+
+        ]
+      }
+    },
+    {
+      "description": "a request to GET all services of namespace $CON_IT_TEST_NAMESPACE",
+      "providerState": "provider has a namespace $CON_IT_TEST_NAMESPACE with services",
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/kubernetes-adapter/namespaces/$CON_IT_TEST_NAMESPACE/services",
+        "headers": {
+          "authorization": "Bearer $AWS_COGNITO_TOKEN"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": [
+          {
+            "instances": 1,
+            "name": "my-service-v1",
+            "status": "Running",
+            "version": "1"
+          },
+          {
+            "instances": 1,
+            "name": "my-service-2-v1",
+            "status": "Broken"
+          }
+        ],
+        "matchingRules": {
+          "$.body": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "a request to GET all services of a namespace that cause an internal provider error",
+      "providerState": "provider is in an arbitrary state",
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/kubernetes-adapter/namespaces/$CON_IT_TEST_NAMESPACE/services",
+        "headers": {
+          "authorization": "Bearer $AWS_COGNITO_TOKEN"
+        }
+      },
+      "response": {
+        "status": 500,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "code": "KA-1234",
+          "status": 500,
+          "message": "an error message",
+          "location": "somewhere",
+          "time": "now"
+        },
+        "matchingRules": {
+          "$.body": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "a request to GET all services of namespace $CON_IT_TEST_NAMESPACE",
+      "providerState": "provider has a namespace $CON_IT_TEST_NAMESPACE with service my-service-v1",
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/kubernetes-adapter/namespaces/$CON_IT_TEST_NAMESPACE/services",
+        "headers": {
+          "authorization": "Bearer $AWS_COGNITO_TOKEN"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": [
+          {
+            "instances": 1,
+            "name": "my-service-v1",
+            "status": "Running",
+            "version": "1"
+          }
+        ],
+        "matchingRules": {
+          "$.body": {
+            "match": "type"
+          }
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  }
+}

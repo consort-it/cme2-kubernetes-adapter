@@ -1,0 +1,5 @@
+---
+build: '1'
+version: '20180319160442'
+commit: ''
+name: 'kubernetes-adapter'
