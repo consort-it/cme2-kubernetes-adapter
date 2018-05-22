@@ -22,7 +22,7 @@ public class KubernetesAPIService {
     private static KubernetesAPIService instance;
     private static int clients = 0;
 
-    private KubernetesAPIService() {
+    private KubernetesAPIService() throws KubernetesException {
       final ConfigBuilder configB = new ConfigBuilder();
 
       configB
@@ -52,7 +52,7 @@ public class KubernetesAPIService {
       client = kubernetesReader;
     }
 
-    public static KubernetesAPIService getInstance() {
+    public static KubernetesAPIService getInstance() throws KubernetesException {
         if (instance == null) {
             instance = new KubernetesAPIService();
         }

@@ -23,6 +23,6 @@ done
 echo "kubeclienturl=https://api.dev.k8s.consort-it.de">>${ENV}
 echo "jwk_url=https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_M4FyC0JPA/.well-known/jwks.json">>${ENV}
 echo "jwk_alg=RS256">>${ENV}
-echo "jwk_kid=xDRkoNj8e6ROIewNPJI9lq+Ye0RUIIHRCsHFDlxsFFs=,ImJm862bLPCtlhQQy368BAoKPayD9DLpNwywW2fhZPI=">>${ENV}
 
+echo david
 cat ${ENV}

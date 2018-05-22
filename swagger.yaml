@@ -184,6 +184,30 @@ definitions:
       instances:
         type: "number"
         description: "The number of service instances on kubernetes"
+      config:
+        type: array
+        description: "Contains an array of config parameters that were applied when this mirkoservice had been deployed to kubernetes."
+        items:
+          $ref: "#/definitions/Config"
+  Config:
+    type: "object"
+    required:
+    - name
+    - value
+    - secret
+    properties:
+      name:
+        type: "string"
+        description: "Name of config"
+      value:
+        type: "string"
+        description: "Value of config"
+      valueFrom:
+        type: "object"
+        description: "If value i configured as secret and need to be fetched by service details are shown in here"
+      secret:
+        type: "boolean"
+        description: "Flag to identify config as Secret or Public config"
   Pod:
     type: "object"
     required:

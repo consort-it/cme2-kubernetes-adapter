@@ -10,6 +10,7 @@ public enum Errors {
   ERR_NO_SUCH_SERVICE("400", "KA-4", "Service can't be found! Aborted."),
   ERR_UNDEFINED_DEPLOYMENT("400", "KA-5", "Deployment is undefined! Aborted."),
   ERR_NO_SUCH_DEPLOYMENT("400", "KA-6", "Deployment can't be found! Aborted."),
+  ERR_PROPERTY_NOT_FOUND("500", "KA-7", "A Property that was being asked for could not been found! Aborted."),
   ERR_AUTHENTICATION_REQUIRED("401", "KA-999", "Authentitcation is missing."),
   ERR_FORBIDDEN("403", "KA-998", "Your Token is forbidden to use."),
   ERR_PAGE_NOT_FOUND("404", "KA-999", "Page could not be found."),

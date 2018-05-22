@@ -40,6 +40,8 @@ spec:
           value: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_M4FyC0JPA/.well-known/jwks.json
         - name: jwk_alg
           value: RS256
+        - name: nosecEnabled
+          value: "${nosecFeature:false}"
       imagePullSecrets:
         - name: regsecret
 ---

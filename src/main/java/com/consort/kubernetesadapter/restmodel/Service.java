@@ -29,6 +29,4 @@ public class Service {
     this.status = status;
     this.instances = instances;
   }
-
-
 }

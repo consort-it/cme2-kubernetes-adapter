@@ -7,11 +7,13 @@ import com.consort.kubernetesadapter.restmodel.Namespace;
 import com.consort.kubernetesadapter.security.AuthorizationFilter;
 import com.consort.kubernetesadapter.service.KubernetesAPIService;
 import com.consort.kubernetesadapter.utils.DeploymentState;
-import com.consort.kubernetesadapter.utils.States;
+import com.consort.kubernetesadapter.restmodel.States;
 import com.consort.kubernetesadapter.utils.RoutingUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.extensions.DeploymentCondition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spark.Service;
 
 import java.util.Arrays;
@@ -23,6 +25,7 @@ import java.util.List;
 import static spark.Service.ignite;
 
 public class KubeAPIController implements RouteController {
+  private final static Logger logger = LoggerFactory.getLogger(KubeAPIController.class);
 
   private static final String SERVICE_PARAM = "service";
   private static final String NAMESPACE_PARAM = "namespace";
@@ -55,7 +58,12 @@ public class KubeAPIController implements RouteController {
   }
 
   private void handleNamespaces(final Service http) {
-    http.before(NAMESPACES_PATH, new AuthorizationFilter(AUTHORIZER_NAME, ROLE_ADMIN));
+    try {
+      http.before(NAMESPACES_PATH, new AuthorizationFilter(AUTHORIZER_NAME, ROLE_ADMIN));
+    } catch(KubernetesException e) {
+      logger.error("Error on initializing. AuthorizationFilter not working properly.", e);
+      System.exit(e.getStatus());
+    }
     http.get(NAMESPACES_PATH, (request, response) -> {
       List<Namespace> result = new LinkedList<>();
       try {
@@ -77,7 +85,12 @@ public class KubeAPIController implements RouteController {
     });
   }
   private void handleService(final Service http) {
-    http.before(DEPLOYMENT_PATH, new AuthorizationFilter(AUTHORIZER_NAME, ROLE_ADMIN));
+    try {
+      http.before(DEPLOYMENT_PATH, new AuthorizationFilter(AUTHORIZER_NAME, ROLE_ADMIN));
+    } catch(KubernetesException e) {
+      logger.error("Error on initializing. AuthorizationFilter not working properly.", e);
+      System.exit(e.getStatus());
+    }
     http.get(DEPLOYMENT_PATH, (request, response) -> {
       final String namespace = request.params(NAMESPACE_PARAM);
       final String service = request.params(SERVICE_PARAM);
@@ -89,7 +102,16 @@ public class KubeAPIController implements RouteController {
         image = item.getSpec().getTemplate().getSpec().getContainers().get(0).getImage().split(":");
         DeploymentState cond = this.selectDeploymentCondition(item, item.getStatus().getReplicas());
 
-        result = new Deployment(item.getMetadata().getName(), image[image.length-1], cond.getStatus(), item.getStatus().getReplicas()==null?0:item.getStatus().getReplicas(), cond.getReason());
+        String config = item.getMetadata().getAnnotations().get("kubectl.kubernetes.io/last-applied-configuration");
+        ObjectMapper mapper = new ObjectMapper();
+        com.consort.kubernetesadapter.restmodel.kubernetes.Deployment deployment;
+
+        result = new Deployment(item.getMetadata().getName(), image[image.length-1], cond.getStatus(), item.getStatus().getReplicas()==null?0:item.getStatus().getReplicas(), cond.getReason(), new LinkedList<>());
+        if(config != null) {
+          deployment = mapper.readValue(item.getMetadata().getAnnotations().get("kubectl.kubernetes.io/last-applied-configuration"), com.consort.kubernetesadapter.restmodel.kubernetes.Deployment.class);
+          if(deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv() != null)
+            result = new Deployment(item.getMetadata().getName(), image[image.length-1], cond.getStatus(), item.getStatus().getReplicas()==null?0:item.getStatus().getReplicas(), cond.getReason(), deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv());
+        }
 
         return getMapper().writeValueAsString(result);
       } catch (KubernetesException e) {
@@ -99,7 +121,12 @@ public class KubeAPIController implements RouteController {
     });
   }
   private void handleServices(final Service http) {
-    http.before(DEPLOYMENTS_PATH, new AuthorizationFilter(AUTHORIZER_NAME, ROLE_ADMIN));
+    try {
+      http.before(DEPLOYMENTS_PATH, new AuthorizationFilter(AUTHORIZER_NAME, ROLE_ADMIN));
+    } catch(KubernetesException e) {
+      logger.error("Error on initializing. AuthorizationFilter not working properly.", e);
+      System.exit(e.getStatus());
+    }
     http.get(DEPLOYMENTS_PATH, (request, response) -> {
       final String namespace = request.params(NAMESPACE_PARAM);
       final String[] filter = (request.queryParams(FILTERBY_OPT_PARAM) != null?request.queryParams(FILTERBY_OPT_PARAM).split(","):new String[0]);
@@ -118,7 +145,16 @@ public class KubeAPIController implements RouteController {
           if(filter.length==0 || Arrays.asList(filter).contains(item.getMetadata().getName())) {
             image = item.getSpec().getTemplate().getSpec().getContainers().get(0).getImage().split(":");
 
-            depl = new Deployment(item.getMetadata().getName(), image[image.length-1], cond.getStatus(), item.getStatus().getReplicas(), cond.getReason());
+            String config = item.getMetadata().getAnnotations().get("kubectl.kubernetes.io/last-applied-configuration");
+            ObjectMapper mapper = new ObjectMapper();
+            com.consort.kubernetesadapter.restmodel.kubernetes.Deployment deployment;
+            depl = new Deployment(item.getMetadata().getName(), image[image.length - 1], cond.getStatus(), item.getStatus().getReplicas(), cond.getReason(), new LinkedList<>());
+            if(config != null) {
+              deployment = mapper.readValue(item.getMetadata().getAnnotations().get("kubectl.kubernetes.io/last-applied-configuration"), com.consort.kubernetesadapter.restmodel.kubernetes.Deployment.class);
+              if(deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv() != null)
+                depl = new Deployment(item.getMetadata().getName(), image[image.length - 1], cond.getStatus(), item.getStatus().getReplicas(), cond.getReason(), deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv());
+            }
+
             result.add(depl);
           }
         }
@@ -131,7 +167,12 @@ public class KubeAPIController implements RouteController {
     });
   }
   private void handlePods(final Service http) {
-    http.before(PODS_PATH, new AuthorizationFilter(AUTHORIZER_NAME, ROLE_ADMIN));
+    try {
+      http.before(PODS_PATH, new AuthorizationFilter(AUTHORIZER_NAME, ROLE_ADMIN));
+    } catch(KubernetesException e) {
+      logger.error("Error on initializing. AuthorizationFilter not working properly.", e);
+      System.exit(e.getStatus());
+    }
     http.get(PODS_PATH, (request, response) -> {
       final String namespace = request.params(NAMESPACE_PARAM);
       final String service = request.params(SERVICE_PARAM);

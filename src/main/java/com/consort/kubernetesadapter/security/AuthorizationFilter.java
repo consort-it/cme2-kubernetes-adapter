@@ -3,8 +3,8 @@ package com.consort.kubernetesadapter.security;
 import com.auth0.jwk.Jwk;
 import com.auth0.jwk.JwkProvider;
 import com.auth0.jwk.UrlJwkProvider;
+import com.consort.kubernetesadapter.exception.KubernetesException;
 import com.consort.kubernetesadapter.utils.EnvironmentContext;
-import com.consort.kubernetesadapter.utils.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.config.Config;
@@ -12,6 +12,8 @@ import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.jwt.config.signature.RSASignatureConfiguration;
 import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
 import org.pac4j.sparkjava.SecurityFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.security.rsa.RSAPublicKeyImpl;
 import spark.Request;
 import spark.Response;
@@ -23,16 +25,17 @@ public class AuthorizationFilter extends SecurityFilter {
   private static final String AUTH0 = "Auth0";
   private static final String HEADER_NAME = "Authorization";
   private static final String AUTHORIZER_SCOPE = "scope";
+  private final static Logger logger = LoggerFactory.getLogger(AuthorizationFilter.class);
 
-  public AuthorizationFilter(final String authorizerName, final String roleName) {
+  public AuthorizationFilter(final String authorizerName, final String roleName) throws KubernetesException {
     super(createSecurityConfig(authorizerName, roleName), AUTH0, AUTHORIZER_SCOPE);
   }
 
-  private static Config createSecurityConfig(final String authorizerName, final String roleName) {
+  private static Config createSecurityConfig(final String authorizerName, final String roleName) throws KubernetesException {
 
     final JwtAuthenticator tokenAuthenticator = new JwtAuthenticator();
     final String jwk_kids = EnvironmentContext.getInstance().getenv("jwk_kid");
-
+System.out.println(jwk_kids);
     for (final String kid : jwk_kids.split(",")) {
 
       final RSASignatureConfiguration signatureConfiguration = new RSASignatureConfiguration();
@@ -48,7 +51,7 @@ public class AuthorizationFilter extends SecurityFilter {
           }
         }
       } catch (Exception e) {
-        Logger.logErr(e.getStackTrace().toString());
+        logger.error("Error when checking environment.", e);
       }
 
       tokenAuthenticator.addSignatureConfiguration(signatureConfiguration);
@@ -69,8 +72,12 @@ public class AuthorizationFilter extends SecurityFilter {
 
   @Override
   public void handle(Request request, Response response) {
-    if (!request.requestMethod().equals("OPTIONS") && !"1".equals(request.queryParams("nosec"))) {
-      super.handle(request, response);
+    try {
+      if (!request.requestMethod().equals("OPTIONS") && (!"1".equals(request.queryParams("nosec")) || "false".equals(EnvironmentContext.getInstance().getenv("nosecEnabled")))) {
+        super.handle(request, response);
+      }
+    } catch(KubernetesException e) {
+      logger.error("Error when checking nosecEnabled in AuthorizationFilter.", e);
     }
   }
 }

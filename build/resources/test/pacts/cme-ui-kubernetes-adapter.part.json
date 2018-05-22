@@ -21,9 +21,7 @@
         "headers": {
           "content-type": "application/json"
         },
-        "body": [
-
-        ]
+        "body": [ ]
       }
     },
     {
@@ -63,7 +61,7 @@
       "providerState": "provider has no namespace NAMESPACEID",
       "request": {
         "method": "GET",
-        "path": "/api/v1/kubernetes-adapter/namespaces/$CON_IT_TEST_NAMESPACE/services",
+        "path": "/api/v1/kubernetes-adapter/namespaces/$CON_IT_TEST_NAMESPACE-non-exist/services",
         "headers": {
           "authorization": "Bearer $AWS_COGNITO_TOKEN"
         }
@@ -92,7 +90,7 @@
       "providerState": "provider has a namespace without services",
       "request": {
         "method": "GET",
-        "path": "/api/v1/kubernetes-adapter/namespaces/$CON_IT_TEST_NAMESPACE/services",
+        "path": "/api/v1/kubernetes-adapter/namespaces/$CON_IT_TEST_NAMESPACE_EMPTY/services",
         "headers": {
           "authorization": "Bearer $AWS_COGNITO_TOKEN"
         }
@@ -147,7 +145,7 @@
       "providerState": "provider is in an arbitrary state",
       "request": {
         "method": "GET",
-        "path": "/api/v1/kubernetes-adapter/namespaces/$CON_IT_TEST_NAMESPACE/services",
+        "path": "/api/v1/kubernetes-adapter/namespaces/$CON_IT_TEST_NAMESPACE/service",
         "headers": {
           "authorization": "Bearer $AWS_COGNITO_TOKEN"
         }
@@ -173,10 +171,10 @@
     },
     {
       "description": "a request to GET all services of namespace $CON_IT_TEST_NAMESPACE",
-      "providerState": "provider has a namespace $CON_IT_TEST_NAMESPACE with service my-service-v1",
+      "providerState": "provider has a namespace $CON_IT_TEST_NAMESPACE with service $CON_IT_TEST_NODE",
       "request": {
         "method": "GET",
-        "path": "/api/v1/kubernetes-adapter/namespaces/$CON_IT_TEST_NAMESPACE/services",
+        "path": "/api/v1/kubernetes-adapter/namespaces/$CON_IT_TEST_NAMESPACE/services/$CON_IT_TEST_NODE",
         "headers": {
           "authorization": "Bearer $AWS_COGNITO_TOKEN"
         }

@@ -1,0 +1,20 @@
+[
+  {
+    "name":"dev",
+    "toggles":[
+      {
+        "name":"nosecFeature",
+        "description":"Enable or Disable nosec Feature for easy access to Microservices via nosec=1 (Data Security Level)",
+        "value":true
+      }, {
+        "name":"nosecFeature2",
+        "description":"Enable or Disable nosec Feature for easy access to Microservices via nosec=1 (Data Security Level)",
+        "value":true
+      }
+    ]
+  },{
+    "name":"live",
+    "toggles":[
+    ]
+  }
+]

@@ -1,6 +1,8 @@
 package com.consort.kubernetesadapter.utils;
 
 
+import com.consort.kubernetesadapter.restmodel.States;
+
 public class DeploymentState {
   private States state;
   private String reason;

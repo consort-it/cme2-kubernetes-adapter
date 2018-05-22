@@ -9,6 +9,8 @@ apply plugin: 'pmd'
 apply plugin: 'jacoco'
 //apply plugin: 'findbugs'
 apply plugin: 'groovy'
+apply plugin: 'application'
+mainClassName = 'com.consort.kubernetesadapter.KubernetesAdapterMain'
 
 group = 'com.consort'
 version = '1.0-SNAPSHOT'
@@ -97,11 +99,15 @@ pact {
         }
     }
     reports {
-      defaultReports() // adds the standard console output
+        defaultReports() // adds the standard console output
 
 //      markdown // report in markdown format
-      json // report in json format
+        json // report in json format
     }
+}
+
+run {
+    main = project.getProperty('mainClassName')
 }
 
 def env = System.getenv();

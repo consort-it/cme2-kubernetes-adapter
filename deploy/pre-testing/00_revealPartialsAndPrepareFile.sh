@@ -23,5 +23,5 @@ do
     echo "$FILE" > "$(echo $partialFile | sed 's/.part//g')"
     echo "$FILE"
     rm $partialFile
-done < <(find ./${NAME} -type f -wholename '*/*.part.*')
+done < <(find ./${NAME}* -type f -wholename '*/*.part.*')
 
